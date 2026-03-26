@@ -10,8 +10,16 @@ import NgramTabs from '@/components/NgramTabs';
 import StopwordToggle from '@/components/StopwordToggle';
 import KeywordPanel from '@/components/KeywordPanel';
 import SummaryPanel from '@/components/SummaryPanel';
+import ExportPanel from '@/components/ExportPanel';
 
 const PAGE_SIZE = 50;
+
+const RESULT_TABS = [
+  { id: 'frequency', label: 'Frequency' },
+  { id: 'keywords', label: 'Keywords' },
+  { id: 'summary',  label: 'Summary'   },
+  { id: 'export',   label: 'Export'    },
+];
 
 function SectionLabel({ number, text }) {
   return (
@@ -19,7 +27,7 @@ function SectionLabel({ number, text }) {
       <span className="font-mono text-[11px] text-secondary" style={{ opacity: 0.45 }}>
         {number}
       </span>
-      <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-secondary">
+      <span className="text-[11px] font-semibold uppercase tracking-widest text-secondary">
         {text}
       </span>
       <div className="flex-1 h-px bg-border" />
@@ -39,6 +47,7 @@ export default function Home() {
   const [sortBy, setSortBy] = useState('frequency');
   const [sortDir, setSortDir] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeResultTab, setActiveResultTab] = useState('frequency');
 
   const analyze = async (ngType) => {
     const type = ngType !== undefined ? ngType : ngramType;
@@ -62,6 +71,7 @@ export default function Home() {
       const data = await res.json();
       setResults(data);
       setCurrentPage(1);
+      setActiveResultTab('frequency');
     } catch (e) {
       setError(e.message);
     } finally {
@@ -116,10 +126,10 @@ export default function Home() {
       <div className="fixed top-0 left-0 right-0 h-[3px] bg-accent z-50" />
 
       <div className="bg-bg min-h-screen pt-[3px]">
-        <div className="max-w-[960px] mx-auto px-6 pt-10 pb-20 max-sm:px-4">
+        <div className="max-w-[960px] mx-auto px-6 pt-10 pb-24 max-sm:px-4">
 
           {/* Masthead */}
-          <header className="mb-10">
+          <header className="mb-12">
             <div className="flex items-baseline justify-between gap-4">
               <h1 className="text-[28px] font-semibold text-primary tracking-[-0.02em] leading-none">
                 Word Frequency Analyzer
@@ -131,9 +141,9 @@ export default function Home() {
             <div className="mt-4 h-px bg-border" />
           </header>
 
-          {/* Input */}
+          {/* ── 01 Input ─────────────────────────────────────────── */}
           <SectionLabel number="01" text="Text Input" />
-          <div className="bg-surface border border-border rounded-[6px] p-6 mb-10">
+          <div className="bg-surface border border-border rounded-[6px] p-6 mb-12">
             <div className="flex gap-4 items-start mb-4">
               <div className="flex-1">
                 <TextInput
@@ -151,7 +161,9 @@ export default function Home() {
               />
             </div>
 
-            {error && <p className="text-danger text-[13px] mb-3 font-mono">{error}</p>}
+            {error && (
+              <p className="text-danger text-[13px] mb-3 font-mono">{error}</p>
+            )}
 
             <button
               type="button"
@@ -165,60 +177,100 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Results */}
+          {/* ── Results ──────────────────────────────────────────── */}
           {results && (
             <>
+              {/* ── 02 Stats ───────────────────────────────────────── */}
               <SectionLabel number="02" text="Summary" />
-              <div className="mb-10">
+              <div className="mb-12">
                 <StatsRow stats={results.stats} />
               </div>
 
-              <SectionLabel number="03" text="Frequency Data" />
-              <div>
-                <div className="flex items-center justify-between border-b border-border mb-6">
-                  <NgramTabs active={ngramType} onChange={handleNgramChange} />
-                  {ngramType === 'unigram' && (
-                    <div className="pb-2">
-                      <StopwordToggle checked={excludeStopwords} onChange={handleStopwordToggle} />
-                    </div>
-                  )}
+              {/* ── 03 Analysis tabs ───────────────────────────────── */}
+              <SectionLabel number="03" text="Analysis" />
+
+              {/* Tab bar */}
+              <div className="flex items-center justify-between border-b border-border mb-6">
+                <div className="flex">
+                  {RESULT_TABS.map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setActiveResultTab(tab.id)}
+                      className={`relative px-4 py-2.5 text-[13px] transition-colors ${
+                        activeResultTab === tab.id
+                          ? 'text-primary font-semibold'
+                          : 'text-secondary hover:text-primary'
+                      }`}
+                    >
+                      {tab.label}
+                      {activeResultTab === tab.id && (
+                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
+                      )}
+                    </button>
+                  ))}
                 </div>
 
-                {ngramType === 'unigram' ? (
-                  <>
-                    <FrequencyChart words={top20} />
-                    {sortedWords.length > 0 ? (
-                      <WordTable
-                        words={pagedWords}
-                        sortBy={sortBy}
-                        sortDir={sortDir}
-                        onSort={handleSort}
-                        currentPage={safePage}
-                        totalPages={totalPages}
-                        totalWords={sortedWords.length}
-                        startIdx={startIdx}
-                        onPageChange={setCurrentPage}
-                      />
-                    ) : (
-                      <p className="font-mono text-[13px] text-secondary mt-4">
-                        No words to display — try disabling the stopword filter.
-                      </p>
-                    )}
-                  </>
-                ) : (
-                  <NgramResultTable ngrams={results.ngrams || []} />
+                {/* Stopword toggle — only in Frequency/unigram context */}
+                {activeResultTab === 'frequency' && ngramType === 'unigram' && (
+                  <div className="pb-2">
+                    <StopwordToggle
+                      checked={excludeStopwords}
+                      onChange={handleStopwordToggle}
+                    />
+                  </div>
                 )}
               </div>
 
-              <SectionLabel number="04" text="Keyword Extraction" />
-              <div className="mb-10">
-                <KeywordPanel keywords={results.keywords || []} />
-              </div>
+              {/* ── Frequency tab ──────────────────────────────────── */}
+              {activeResultTab === 'frequency' && (
+                <div>
+                  {/* N-gram sub-tabs */}
+                  <div className="border-b border-border/60 mb-6">
+                    <NgramTabs active={ngramType} onChange={handleNgramChange} />
+                  </div>
 
-              <SectionLabel number="05" text="Text Summary" />
-              <div className="mb-10">
+                  {ngramType === 'unigram' ? (
+                    <>
+                      <FrequencyChart words={top20} />
+                      {sortedWords.length > 0 ? (
+                        <WordTable
+                          words={pagedWords}
+                          sortBy={sortBy}
+                          sortDir={sortDir}
+                          onSort={handleSort}
+                          currentPage={safePage}
+                          totalPages={totalPages}
+                          totalWords={sortedWords.length}
+                          startIdx={startIdx}
+                          onPageChange={setCurrentPage}
+                        />
+                      ) : (
+                        <p className="font-mono text-[13px] text-secondary mt-4">
+                          No words to display — try disabling the stopword filter.
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <NgramResultTable ngrams={results.ngrams || []} />
+                  )}
+                </div>
+              )}
+
+              {/* ── Keywords tab ───────────────────────────────────── */}
+              {activeResultTab === 'keywords' && (
+                <KeywordPanel keywords={results.keywords || []} />
+              )}
+
+              {/* ── Summary tab ────────────────────────────────────── */}
+              {activeResultTab === 'summary' && (
                 <SummaryPanel summary={results.summary} />
-              </div>
+              )}
+
+              {/* ── Export tab ─────────────────────────────────────── */}
+              {activeResultTab === 'export' && (
+                <ExportPanel results={results} />
+              )}
             </>
           )}
         </div>
