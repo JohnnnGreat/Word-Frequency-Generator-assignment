@@ -131,10 +131,10 @@ export default function Home() {
           {/* Masthead */}
           <header className="mb-12">
             <div className="flex items-baseline justify-between gap-4">
-              <h1 className="text-[28px] font-semibold text-primary tracking-[-0.02em] leading-none">
+              <h1 className="text-[22px] sm:text-[28px] font-semibold text-primary tracking-[-0.02em] leading-none">
                 Word Frequency Analyzer
               </h1>
-              <span className="font-mono text-[11px] text-secondary tracking-[0.05em] shrink-0 pb-px">
+              <span className="font-mono text-[11px] text-secondary tracking-[0.05em] shrink-0 pb-px hidden sm:block">
                 NLP Analysis Tool
               </span>
             </div>
@@ -144,8 +144,8 @@ export default function Home() {
           {/* ── 01 Input ─────────────────────────────────────────── */}
           <SectionLabel number="01" text="Text Input" />
           <div className="bg-surface border border-border rounded-[6px] p-6 mb-12">
-            <div className="flex gap-4 items-start mb-4">
-              <div className="flex-1">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start mb-4">
+              <div className="flex-1 w-full">
                 <TextInput
                   value={text}
                   onChange={(v) => {
@@ -190,34 +190,39 @@ export default function Home() {
               <SectionLabel number="03" text="Analysis" />
 
               {/* Tab bar */}
-              <div className="flex items-center justify-between border-b border-border mb-6">
-                <div className="flex">
-                  {RESULT_TABS.map((tab) => (
-                    <button
-                      key={tab.id}
-                      type="button"
-                      onClick={() => setActiveResultTab(tab.id)}
-                      className={`relative px-4 py-2.5 text-[13px] transition-colors ${
-                        activeResultTab === tab.id
-                          ? 'text-primary font-semibold'
-                          : 'text-secondary hover:text-primary'
-                      }`}
-                    >
-                      {tab.label}
-                      {activeResultTab === tab.id && (
-                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
-                      )}
-                    </button>
-                  ))}
+              <div className="mb-6">
+                <div className="flex border-b border-border">
+                  {/* Scrollable tab row */}
+                  <div className="flex overflow-x-auto flex-1" style={{ scrollbarWidth: 'none' }}>
+                    {RESULT_TABS.map((tab) => (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveResultTab(tab.id)}
+                        className={`relative whitespace-nowrap px-3 sm:px-4 py-2.5 text-[13px] transition-colors shrink-0 ${
+                          activeResultTab === tab.id
+                            ? 'text-primary font-semibold'
+                            : 'text-secondary hover:text-primary'
+                        }`}
+                      >
+                        {tab.label}
+                        {activeResultTab === tab.id && (
+                          <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  {/* Stopword toggle — inline on desktop */}
+                  {activeResultTab === 'frequency' && ngramType === 'unigram' && (
+                    <div className="pb-2 hidden sm:flex items-center">
+                      <StopwordToggle checked={excludeStopwords} onChange={handleStopwordToggle} />
+                    </div>
+                  )}
                 </div>
-
-                {/* Stopword toggle — only in Frequency/unigram context */}
+                {/* Stopword toggle — below tabs on mobile */}
                 {activeResultTab === 'frequency' && ngramType === 'unigram' && (
-                  <div className="pb-2">
-                    <StopwordToggle
-                      checked={excludeStopwords}
-                      onChange={handleStopwordToggle}
-                    />
+                  <div className="pt-3 flex sm:hidden">
+                    <StopwordToggle checked={excludeStopwords} onChange={handleStopwordToggle} />
                   </div>
                 )}
               </div>
@@ -226,7 +231,7 @@ export default function Home() {
               {activeResultTab === 'frequency' && (
                 <div>
                   {/* N-gram sub-tabs */}
-                  <div className="border-b border-border/60 mb-6">
+                  <div className="border-b border-border/60 mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                     <NgramTabs active={ngramType} onChange={handleNgramChange} />
                   </div>
 
