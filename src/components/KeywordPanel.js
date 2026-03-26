@@ -102,7 +102,7 @@ function ListView({ keywords }) {
           >
             {String(kw.rank).padStart(2, '0')}
           </span>
-          <span className="font-mono text-[13px] text-primary w-32 shrink-0 truncate">
+          <span className="font-mono text-[13px] text-primary w-24 sm:w-32 shrink-0 truncate">
             {kw.keyword}
           </span>
           <div className="flex-1 h-[14px] bg-bg rounded-[2px] overflow-hidden">

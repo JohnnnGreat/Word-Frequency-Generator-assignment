@@ -9,7 +9,7 @@ export default function StatsRow({ stats }) {
   return (
     <div className="bg-surface border border-border rounded-[6px] flex divide-x divide-border max-sm:flex-col max-sm:divide-x-0 max-sm:divide-y">
       {items.map((item) => (
-        <div key={item.label} className="flex-1 px-5 py-4">
+        <div key={item.label} className="flex-1 px-4 sm:px-5 py-4">
           <div
             className="text-[10px] font-semibold uppercase tracking-widest text-secondary mb-2.5"
             style={{ opacity: 0.7 }}

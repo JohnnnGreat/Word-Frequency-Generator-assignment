@@ -12,7 +12,7 @@ export default function FileUpload({ onFile, fileName }) {
   };
 
   return (
-    <div className="flex flex-col items-end gap-2 ml-4 shrink-0">
+    <div className="flex flex-col items-start sm:items-end gap-2 sm:ml-4 shrink-0 w-full sm:w-auto">
       <button
         type="button"
         onClick={() => inputRef.current?.click()}

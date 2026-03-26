@@ -70,7 +70,7 @@ export default function WordTable({
         </table>
       </div>
 
-      <div className="flex items-center justify-between px-4 py-3 border-t border-border bg-bg">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-3 border-t border-border bg-bg">
         <span className="font-mono text-[11px] text-secondary" style={{ opacity: 0.7 }}>
           {words.length > 0 ? startIdx : 0}–{endIdx} of {totalWords.toLocaleString()} words
         </span>

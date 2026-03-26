@@ -3,7 +3,7 @@ export default function FrequencyChart({ words }) {
   const maxFreq = words[0].frequency;
 
   return (
-    <div className="bg-surface border border-border rounded-[6px] p-6 mb-4">
+    <div className="bg-surface border border-border rounded-[6px] p-4 sm:p-6 mb-4">
       <div className="flex items-baseline justify-between mb-5">
         <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-secondary">
           Frequency Distribution
@@ -13,7 +13,6 @@ export default function FrequencyChart({ words }) {
         </span>
       </div>
 
-      {/* Chart area with grid */}
       <div className="flex flex-col gap-[3px]">
         {words.map((item, i) => (
           <div key={item.word} className="flex items-center gap-2 h-[26px] group">
@@ -25,22 +24,20 @@ export default function FrequencyChart({ words }) {
               {String(i + 1).padStart(2, '0')}
             </span>
 
-            {/* Word label */}
-            <span className="font-mono text-[13px] text-secondary w-[112px] text-right shrink-0 truncate">
+            {/* Word label — narrower on mobile */}
+            <span className="font-mono text-[13px] text-secondary w-[80px] sm:w-[112px] text-right shrink-0 truncate">
               {item.word}
             </span>
 
             {/* Bar track */}
             <div className="flex-1 relative h-full flex items-center">
-              {/* Ghost grid lines */}
               {[25, 50, 75].map((pct) => (
                 <div
                   key={pct}
-                  className="absolute top-0 bottom-0 border-l border-border"
+                  className="absolute top-0 bottom-0 border-l border-border hidden sm:block"
                   style={{ left: `${pct}%`, borderStyle: 'dashed' }}
                 />
               ))}
-              {/* Bar */}
               <div
                 className={`h-[16px] relative z-10 transition-opacity group-hover:opacity-70 ${
                   i < 5 ? 'bg-accent' : 'bg-accent-muted'
@@ -50,13 +47,13 @@ export default function FrequencyChart({ words }) {
             </div>
 
             {/* Count */}
-            <span className="font-mono text-[12px] text-secondary w-12 text-right shrink-0">
+            <span className="font-mono text-[12px] text-secondary w-10 sm:w-12 text-right shrink-0">
               {item.frequency.toLocaleString()}
             </span>
 
-            {/* Percentage */}
+            {/* Percentage — hidden on mobile */}
             <span
-              className="font-mono text-[11px] w-10 text-right shrink-0"
+              className="font-mono text-[11px] w-10 text-right shrink-0 hidden sm:inline"
               style={{ color: '#6B6B65', opacity: 0.5 }}
             >
               {item.percentage?.toFixed(1)}%
@@ -65,8 +62,8 @@ export default function FrequencyChart({ words }) {
         ))}
       </div>
 
-      {/* Scale labels */}
-      <div className="flex mt-2" style={{ marginLeft: 'calc(5px + 20px + 8px + 112px + 8px)' }}>
+      {/* Scale labels — hidden on mobile */}
+      <div className="hidden sm:flex mt-2" style={{ marginLeft: 'calc(5px + 20px + 8px + 112px + 8px)' }}>
         <div className="flex-1 relative">
           {[25, 50, 75].map((pct) => (
             <span

@@ -36,7 +36,7 @@ export default function SummaryPanel({ summary }) {
 
   return (
     <div className="bg-surface border border-border rounded-[6px] p-6">
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
         <div>
           <PanelHeading />
           <p className="text-[13px] text-secondary" style={{ opacity: 0.7 }}>
@@ -44,7 +44,7 @@ export default function SummaryPanel({ summary }) {
           </p>
         </div>
         {/* Length selector */}
-        <div className="flex items-center gap-1 ml-4 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <span className="font-mono text-[11px] text-secondary mr-1.5" style={{ opacity: 0.6 }}>
             Show:
           </span>
