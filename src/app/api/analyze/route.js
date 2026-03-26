@@ -1,4 +1,4 @@
-import { analyzeText } from '@/lib/nlp';
+import { analyzeText, extractKeywords, extractSummary } from '@/lib/nlp';
 import { parseFile } from '@/lib/fileParser';
 
 export async function POST(request) {
@@ -25,7 +25,10 @@ export async function POST(request) {
     }
 
     const result = analyzeText(text, ngramType);
-    return Response.json(result);
+    const keywords = extractKeywords(text);
+    const summary = extractSummary(text, 7);
+
+    return Response.json({ ...result, keywords, summary });
   } catch (err) {
     console.error('Analyze error:', err);
     return Response.json(

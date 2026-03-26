@@ -8,6 +8,8 @@ import FrequencyChart from '@/components/FrequencyChart';
 import WordTable from '@/components/WordTable';
 import NgramTabs from '@/components/NgramTabs';
 import StopwordToggle from '@/components/StopwordToggle';
+import KeywordPanel from '@/components/KeywordPanel';
+import SummaryPanel from '@/components/SummaryPanel';
 
 const PAGE_SIZE = 50;
 
@@ -206,6 +208,16 @@ export default function Home() {
                 ) : (
                   <NgramResultTable ngrams={results.ngrams || []} />
                 )}
+              </div>
+
+              <SectionLabel number="04" text="Keyword Extraction" />
+              <div className="mb-10">
+                <KeywordPanel keywords={results.keywords || []} />
+              </div>
+
+              <SectionLabel number="05" text="Text Summary" />
+              <div className="mb-10">
+                <SummaryPanel summary={results.summary} />
               </div>
             </>
           )}
